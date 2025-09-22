@@ -32,6 +32,19 @@ git clone git@github.com:snowflakedb/snowflake-s3compat-api-test-suite.git
 ```bash
 cd snowflake-s3compat-api-test-suite && mvn clean install -DskipTests
 ```
+Build using Podman
+----------------------
+1. Modify settings.xml with the github server block referenced above
+2. Build the container using this command
+```bash
+podman build -t snowflakedb/snowflake-s3compat-api-test-suite . -f Dockerfile
+```
+3. Modify test.conf with the environment variables specified below
+4. Run the newly containerized using this command
+```bash
+podman run -e TEST_ARGS=-Dtest=S3CompatApiTest#getBucketLocation --env-file=test.conf snowflakedb/snowflake-s3compat-api-test-suite:latest
+```
+
 
 Variables needed for running tests
 =================================
@@ -50,7 +63,6 @@ Variables needed for running tests
 example to set environment variables:
 ```bash
 export REGION_1=<region_1_for_bucket_1>
-
 ```
 
 The test suite accept environment variables or CLI arguments.
