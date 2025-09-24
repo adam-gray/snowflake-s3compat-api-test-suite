@@ -42,7 +42,11 @@ podman build -t snowflakedb/snowflake-s3compat-api-test-suite . -f Dockerfile
 3. Modify test.conf with the environment variables specified below
 4. Run the newly containerized using this command
 ```bash
-podman run -e TEST_ARGS=-Dtest=S3CompatApiTest#getBucketLocation --env-file=test.conf snowflakedb/snowflake-s3compat-api-test-suite:latest
+./run.sh <container name> <image name> <env path> <log4j.properties path>
+```
+For example:
+```bash
+./run.sh my-test localhost/s3compat-api-test:latest path/to/test.conf path/to/log4j.properties
 ```
 
 
