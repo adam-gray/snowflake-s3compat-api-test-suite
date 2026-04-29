@@ -1,5 +1,5 @@
-# Created by https://www.gitignore.io/api/c,c++,node,java,python,intellij,netbeans
-# Edit at https://www.gitignore.io/?templates=c,c++,node,java,python,intellij,netbeans
+# Created by https://www.gitignore.io/api/c,c++,node,java,python,intellij,netbeans,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=c,c++,node,java,python,intellij,netbeans,visualstudiocode
 
 ### C ###
 # Prerequisites
@@ -266,6 +266,19 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+.env.local
+.env.*.local
+
+### Podman Configuration ###
+# Maven settings with GitHub credentials (contains sensitive PAT)
+settings.xml
+
+# Test results directory
+test-results/
+
+# Log files (but keep the logs directory)
+logs/*.log
+logs/*.log.*
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -392,4 +405,15 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# End of https://www.gitignore.io/api/c,c++,node,java,python,intellij,netbeans
+#vscode
+.vscode/
+
+# vscode
+.vscode/*
+
+# S3compat project specific 
+settings.xml
+test-results/
+
+
+# End of https://www.gitignore.io/api/c,c++,node,java,python,intellij,netbeans,visualstudiocode

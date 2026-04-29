@@ -1,0 +1,89 @@
+version: '3.8'
+
+# Podman Compose configuration for Snowflake S3Compat API Test Suite
+#
+# PREREQUISITES:
+#   1. Create settings.xml from settings.xml.template with GitHub credentials
+#   2. Create .env from .env.example with test environment variables
+#   3. Install podman-compose: pip3 install podman-compose
+#
+# USAGE:
+#   Build: podman-compose build
+#   Run all tests: podman-compose up
+#   Run specific test: podman-compose run --rm tests mvn test -Dtest=S3CompatApiTest#getObject
+#   Interactive shell: podman-compose run --rm tests /bin/bash
+#   Clean up: podman-compose down -v
+#
+# PODMAN-SPECIFIC NOTES:
+#   - Uses :z flag for SELinux compatibility on volumes
+#   - Secrets are handled via file mounts during build
+#   - Compatible with rootless Podman
+
+services:
+  # Main test service
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      secrets:
+        - maven_settings
+    image: s3compat-test-suite:latest
+    container_name: s3compat-tests
+    
+    # Load environment variables from .env file
+    env_file:
+      - .env
+    
+    # Mount volumes with SELinux labels for Podman
+    volumes:
+      # Maven cache volume for faster rebuilds
+      - maven-cache:/root/.m2/repository:z
+      
+      # Test results output directory
+      - ./test-results:/app/s3compatapi/target/surefire-reports:z
+      
+      # Logs directory for log file output
+      - ./logs:/app/logs:z
+      
+      # Log4j configuration for runtime logging control
+      - ./log4j.properties:/app/s3compatapi/src/main/resources/log4j.properties:z
+      
+      # Optional: Mount source for live development
+      # Uncomment the following lines if you want to modify code without rebuilding
+      # - ./s3compatapi/src:/app/s3compatapi/src:ro,z
+    
+    # Default command runs all tests
+    # Override with: podman-compose run --rm tests mvn test -Dtest=YourTest
+    command: ["mvn", "test", "-Dtest=S3CompatApiTest"]
+    
+    # Security options for rootless Podman (optional)
+    security_opt:
+      - label=disable
+    
+    # Resource limits (optional, adjust as needed)
+    # Note: Podman handles cgroups differently than Docker
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2.0'
+    #       memory: 2G
+    
+    # Network configuration (optional)
+    # networks:
+    #   - test-network
+
+# Volumes
+volumes:
+  # Persistent Maven cache to speed up subsequent builds and test runs
+  maven-cache:
+    driver: local
+
+# Networks (optional)
+# networks:
+#   test-network:
+#     driver: bridge
+
+# Build secrets
+secrets:
+  maven_settings:
+    file: ./settings.xml
